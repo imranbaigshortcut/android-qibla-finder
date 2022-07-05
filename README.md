@@ -1,2 +1,3 @@
-# android-qibla-finder
-An easy to use and lightweight Android Qibla Finder/Compass library 
+# Android Qibla Finder
+An easy to use and lightweight Android Qibla Finder/Compass library
+
