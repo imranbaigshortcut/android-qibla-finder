@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="QiblaCompassView">
+        <attr name="hideStatusText" format="boolean" />
+        <attr name="dialDrawable" format="reference" />
+        <attr name="needleDrawable" format="reference" />
+        <attr name="degrees" format="float" />
+        <attr name="currentLatitude" format="float" />
+        <attr name="currentLongitude" format="float" />
+    </declare-styleable>
+</resources>
