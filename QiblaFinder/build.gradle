@@ -31,12 +31,6 @@ android {
         jvmTarget = '11'
     }
 
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-        }
-    }
 }
 
 def githubProperties = new Properties()
