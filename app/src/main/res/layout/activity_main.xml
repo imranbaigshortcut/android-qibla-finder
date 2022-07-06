@@ -10,7 +10,7 @@
         android:id="@+id/qiblaCompassView"
         app:dialDrawable="@drawable/ic_dial"
         app:needleDrawable="@drawable/ic_needle"
-        app:hideStatusText="false"
+        app:hideStatusText="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

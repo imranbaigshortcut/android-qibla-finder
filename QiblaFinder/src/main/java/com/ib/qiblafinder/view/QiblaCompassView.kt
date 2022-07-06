@@ -83,19 +83,22 @@ class QiblaCompassView : FrameLayout, SensorEventListener {
                 R.styleable.QiblaCompassView_dialDrawable
             )
             dialDrawable?.callback = this
+        } else {
+            dialDrawable = resources.getDrawable(R.drawable.ic_def_compass)
         }
         if (typedArray.hasValue(R.styleable.QiblaCompassView_needleDrawable)) {
             needleDrawable = typedArray.getDrawable(
                 R.styleable.QiblaCompassView_needleDrawable
             )
-            dialDrawable?.callback = this
+            needleDrawable?.callback = this
+        }
+        else {
+            needleDrawable = resources.getDrawable(R.drawable.ic_def_needle)
         }
 
         typedArray.recycle()
 
         val root = inflate(context, R.layout.view_qibla, this)
-
-
 
         imageNeedle = root.findViewById(R.id.imageNeedle)
         imageDial = root.findViewById(R.id.imageDial)
@@ -114,6 +117,8 @@ class QiblaCompassView : FrameLayout, SensorEventListener {
                 this.longitude = longitude.toDouble()
             }
         }
+
+        invalidateUI()
     }
 
     override fun onDetachedFromWindow() {

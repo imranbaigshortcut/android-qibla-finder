@@ -18,14 +18,12 @@
             android:rotation="124"
             android:layout_gravity="center"
             android:id="@+id/imageDial"
-            android:src="@drawable/ic_def_compass"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <ImageView
             android:layout_gravity="center"
             android:id="@+id/imageNeedle"
-            android:src="@drawable/ic_def_needle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
