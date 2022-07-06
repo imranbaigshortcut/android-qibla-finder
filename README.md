@@ -21,7 +21,7 @@ An easy to use and lightweight Android Qibla Finder/Compass library
 ##### 2. Add the dependency app level gradle
 ```
   dependencies {
-	       implementation 'com.github.imranbaigshortcut:android-qibla-finder:1.0.2'
+	       implementation 'com.github.imranbaigshortcut:android-qibla-finder:1.0.3'
   }
 ```
   
