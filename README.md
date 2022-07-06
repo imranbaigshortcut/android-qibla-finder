@@ -1,3 +1,6 @@
+<img src="screenshot.png" width="200">
+
+
 # Android Qibla Finder
 An easy to use and lightweight Android Qibla Finder/Compass library
 
@@ -24,6 +27,8 @@ An easy to use and lightweight Android Qibla Finder/Compass library
   
 ### How to add in the xml layout
 
+Library provides a simple lightweight custom view QiblaCompassView that you can add in your activity or fragment.
+
 ```
 <com.ib.qiblafinder.view.QiblaCompassView
         android:id="@+id/qiblaCompassView"
@@ -35,3 +40,5 @@ An easy to use and lightweight Android Qibla Finder/Compass library
         />   
 
 ```
+
+
