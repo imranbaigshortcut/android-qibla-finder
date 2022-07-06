@@ -1,7 +1,7 @@
 <img src="screenshot.png" width="200">
 
 
-# Android Qibla Finder
+# Android Qibla Finder or Compass
 An easy to use and lightweight Android Qibla Finder/Compass library
 
 ## Current Version 
