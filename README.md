@@ -25,7 +25,7 @@ An easy to use and lightweight Android Qibla Finder/Compass library
   }
 ```
   
-### How to add in the xml layout
+### How to add QiblaCompassView in the xml layout
 
 Library provides a simple lightweight custom view QiblaCompassView that you can add in your activity or fragment.
 
@@ -41,4 +41,27 @@ Library provides a simple lightweight custom view QiblaCompassView that you can 
 
 ```
 
+##### Usage QiblaDegreeListener
+With every new location, degree changes 
 
+```
+  
+qiblaCompassView.degreeListener = object : QiblaDegreeListener {
+            override fun onDegreeChange(degree: Float) {
+                // Save the degree in your app preference for future initialization 
+            }
+}
+```
+
+##### Usage of location property
+Find your current location from location services and provide it to QiblaCompassView for accurate direction finding
+```
+qiblaCompassView.location = location    
+```
+
+##### Usage of degree property
+Optionally set the saved degree angle from last time
+
+```
+qiblaCompassView.degree = startingDegree 
+```
