@@ -4,8 +4,6 @@ plugins {
     id 'maven-publish'
 }
 
-
-
 android {
     compileSdk 32
 
@@ -33,43 +31,6 @@ android {
 
 }
 
-def githubProperties = new Properties()
-githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
-
-
-def getVersionName = { ->
-    return "1.0.1"
-}
-
-def getArtificatId = { ->
-    return "qiblafinder"
-}
-
-publishing {
-    publications {
-        bar(MavenPublication) {
-            groupId 'com.ib.qiblafinder'
-            artifactId getArtificatId()
-            version getVersionName()
-            artifact("$buildDir/outputs/aar/${getArtificatId()}-release.aar")
-        }
-    }
-
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/imranbaigshortcut/android-qibla-finder")
-
-            credentials {
-                /**Create github.properties in root project folder file with gpr.usr=GITHUB_USER_ID  & gpr.key=PERSONAL_ACCESS_TOKEN**/
-                username = githubProperties['gpr.usr'] ?: System.getenv("GPR_USER")
-                password = githubProperties['gpr.key'] ?: System.getenv("GPR_API_KEY")
-            }
-        }
-    }
-}
-
-
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.8.0'
@@ -77,4 +38,17 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.imranbaigshortcut'
+                artifactId = 'android-qibla-finder'
+                version = '1.0.2'
+            }
+        }
+    }
 }
