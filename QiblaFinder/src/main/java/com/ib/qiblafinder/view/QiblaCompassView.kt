@@ -10,16 +10,18 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.Animation
-import android.view.animation.RotateAnimation
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import com.ib.qiblafinder.QiblaDegreeListener
 import com.ib.qiblafinder.R
-import kotlin.math.roundToInt
+
 
 class QiblaCompassView : FrameLayout, SensorEventListener {
+
+    private val mValues = FloatArray(3)
+    private val mRotationMatrix = FloatArray(16)
+
 
     private var currentDegree = 0f
     private  var  mSensorManager: SensorManager?= null
@@ -108,7 +110,7 @@ class QiblaCompassView : FrameLayout, SensorEventListener {
         imageNeedle.rotation = rotationDegree
         imageNeedle.refreshDrawableState()
 
-        mSensorManager?.registerListener(this, mSensorManager?.getDefaultSensor(Sensor.TYPE_ORIENTATION),
+        mSensorManager?.registerListener(this, mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
             SensorManager.SENSOR_DELAY_UI)
 
         if(latitude !=0f && longitude !=0f) {
@@ -160,27 +162,106 @@ class QiblaCompassView : FrameLayout, SensorEventListener {
 
     override fun onSensorChanged(event: SensorEvent) {
 
-        val degree = event.values[0].roundToInt().toFloat()
+        try {
+            SensorManager.getRotationMatrixFromVector(this.mRotationMatrix, event.values)
+            SensorManager.getOrientation(this.mRotationMatrix, this.mValues)
+            val arrayOfFloat: FloatArray = this.mValues
+            val i = (arrayOfFloat[1] * 57.29578f).toInt()
+            var f = java.lang.Double.valueOf(Math.toDegrees(arrayOfFloat[0].toDouble())).toFloat()
+            if (i <= -35 || i >= 35) {
+                //this.tooltipPhoneHorizontal.setVisibility(0)
+            } else {
+                //this.tooltipPhoneHorizontal.setVisibility(4)
+            }
+            if (Math.round(0.0f) == Math.round(f)) return
+            f = -f
+            calculator(f.toDouble())
+            rotation(f)
+        } catch (exception: Exception) {
+        }
 
-        val rotateAnimation = RotateAnimation(
-            currentDegree,
-            -degree,
-            Animation.RELATIVE_TO_SELF, 0.5f,
-            Animation.RELATIVE_TO_SELF,
-            0.5f
-        )
-
-        rotateAnimation.duration = 300
-        rotateAnimation.fillAfter = true
-
-        imageNeedle.startAnimation(rotateAnimation)
-        imageDial.startAnimation(rotateAnimation)
-        currentDegree = -degree
-
-        degreeListener?.onDegreeChange(currentDegree)
+        //degreeListener?.onDegreeChange(currentDegree)
 
     }
+
+    fun rotation(paramFloat: Float) {
+        try {
+            imageNeedle.rotation = paramFloat;
+        } catch ( exception: Exception) {
+
+        }
+    }
+
+    fun calculator(paramDouble: Double) {
+        try {
+            val coordinates = Coordinates(this.currentLocation.latitude, this.currentLocation.longitude)
+            val qibla = Qibla(coordinates)
+            val stringBuilder = StringBuilder()
+
+            stringBuilder.append("+")
+            stringBuilder.append(Math.round(qibla.direction))
+            val str = stringBuilder.toString()
+            this.imageDial.rotation = paramDouble.toFloat() + str.toFloat()
+        } catch (exception: java.lang.Exception) {
+            exception.printStackTrace()
+        }
+    }
+
 
     override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {
     }
 }
+
+
+data class Coordinates(val latitude: Double, val longitude: Double)
+
+
+class Qibla(paramCoordinates: Coordinates) {
+    val direction: Double
+
+    companion object {
+        private val MAKKAH = Coordinates(21.4225241, 39.8261818)
+    }
+
+    init {
+        direction = QiblaUtil.calculateQiblaDirection(paramCoordinates)
+    }
+}
+
+
+object QiblaUtil {
+    private val MAKKAH = Coordinates(21.4225241, 39.8261818)
+    fun calculateQiblaDirection(paramCoordinates: Coordinates): Double {
+        val (latitude, longitude) = MAKKAH
+        val d1 = Math.toRadians(longitude) - Math.toRadians(paramCoordinates.longitude)
+        val d2 = Math.toRadians(paramCoordinates.latitude)
+        return DoubleUtil.unwindAngle(
+            Math.toDegrees(
+                Math.atan2(
+                    Math.sin(d1), Math.cos(d2) * Math.tan(
+                        Math.toRadians(
+                            latitude
+                        )
+                    ) - Math.sin(d2) * Math.cos(d1)
+                )
+            )
+        )
+    }
+}
+
+internal object DoubleUtil {
+    fun closestAngle(paramDouble: Double): Double {
+        return if (paramDouble >= -180.0 && paramDouble <= 180.0) paramDouble else paramDouble - Math.round(
+            paramDouble / 360.0
+        ) * 360L
+    }
+
+    fun normalizeWithBound(paramDouble1: Double, paramDouble2: Double): Double {
+        return paramDouble1 - paramDouble2 * Math.floor(paramDouble1 / paramDouble2)
+    }
+
+    fun unwindAngle(paramDouble: Double): Double {
+        return normalizeWithBound(paramDouble, 360.0)
+    }
+}
+
