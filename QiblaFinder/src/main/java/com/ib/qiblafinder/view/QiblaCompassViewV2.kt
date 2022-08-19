@@ -39,6 +39,7 @@ class QiblaCompassViewV2 : FrameLayout, QiblaSensorEventListener {
         get() = currentLocation
         set(value) {
             currentLocation = value
+            qiblaSensor?.currentLocation = LocationCoordinates(currentLocation.latitude, currentLocation.longitude)
             invalidateUI()
         }
 
