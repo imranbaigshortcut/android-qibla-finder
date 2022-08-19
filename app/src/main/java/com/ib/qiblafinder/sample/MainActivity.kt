@@ -2,8 +2,9 @@ package com.ib.qiblafinder.sample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.ib.qiblafinder.view.QiblaCompassView
+import com.ib.qiblafinder.view.QiblaCompassViewV2
 import com.ib.qiblafinder.QiblaDegreeListener
+import com.ib.qiblafinder.view.QiblaCompassView
 
 class MainActivity : AppCompatActivity() {
     private lateinit var qiblaCompassView: QiblaCompassView

@@ -27,6 +27,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
+        <View
+            android:id="@+id/line"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            android:background="@android:color/holo_green_dark"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"/>
+
     </FrameLayout>
 
 </LinearLayout>
