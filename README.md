@@ -7,6 +7,8 @@ An easy to use and lightweight Android Qibla Finder/Compass library
 ## Current Version 
 [![](https://jitpack.io/v/imranbaigshortcut/android-qibla-finder.svg)](https://jitpack.io/#imranbaigshortcut/android-qibla-finder)
 
+1.0.4
+
 
 ### How to add in your android project 
 
