@@ -3,10 +3,6 @@ package com.ib.qiblafinder.view
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.location.Location
 import android.util.AttributeSet
 import android.view.View
@@ -15,17 +11,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.ib.qiblafinder.QiblaDegreeListener
 import com.ib.qiblafinder.R
+import com.ib.qiblafinder.sensor.QiblaSensor
+import com.ib.qiblafinder.sensor.QiblaSensorEventListener
 import com.ib.qiblafinder.utils.LocationCoordinates
-import com.ib.qiblafinder.utils.QiblaAngle
-import kotlin.math.roundToInt
 
-class QiblaCompassViewV2 : FrameLayout, SensorEventListener {
 
-    private val rotationVector = FloatArray(16)
-    private val values = FloatArray(3)
+class QiblaCompassViewV2 : FrameLayout, QiblaSensorEventListener {
 
     private var currentDegree = 0f
-    private  var  mSensorManager: SensorManager?= null
+    private  var  qiblaSensor: QiblaSensor?= null
     private var rotationDegree: Float = 138.0f
     private var currentLocation = Location("current location")
 
@@ -111,31 +105,32 @@ class QiblaCompassViewV2 : FrameLayout, SensorEventListener {
         line = root.findViewById(R.id.line)
 
 
-        mSensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        qiblaSensor = QiblaSensor(this.context)
+
         imageNeedle.rotation = rotationDegree
         imageNeedle.refreshDrawableState()
 
-        mSensorManager?.registerListener(this, mSensorManager?.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-            SensorManager.SENSOR_DELAY_UI)
+        qiblaSensor?.register(this)
 
         if(latitude !=0f && longitude !=0f) {
             currentLocation.apply {
                 this.latitude = latitude.toDouble()
                 this.longitude = longitude.toDouble()
             }
+
+            qiblaSensor?.currentLocation = LocationCoordinates(latitude.toDouble(), longitude.toDouble())
         }
 
         invalidateUI()
 
         if(currentDegree != 0f) {
-            setDirectionRotation(currentDegree.toDouble())
-            setDialRotation(currentDegree)
+
         }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        mSensorManager?.unregisterListener(this)
+        qiblaSensor?.unregister()
     }
 
     @SuppressLint("SetTextI18n")
@@ -155,63 +150,24 @@ class QiblaCompassViewV2 : FrameLayout, SensorEventListener {
         textViewStatus.visibility = if(hideStatusText) View.GONE  else View.VISIBLE
     }
 
-    override fun onSensorChanged(event: SensorEvent) {
-
-        SensorManager.getRotationMatrixFromVector(rotationVector, event.values)
-        SensorManager.getOrientation(rotationVector, this.values)
-        val floatArray = values
-
-        val intVal = (floatArray[1] * 57.29578f).toInt()
-
-        var directionAngle =
-            Math.toDegrees(floatArray[0].toDouble()).toFloat()
-
-        if (intVal <= -35 || intVal >= 35) {
+    override fun onDeviceAngle(angle: Int) {
+        if (angle <= -35 || angle >= 35) {
             line.visibility = View.VISIBLE
         } else {
             line.visibility = View.VISIBLE
         }
-
-        if (0.0f.roundToInt() == directionAngle.roundToInt())  {
-            return
-        }
-
-
-        directionAngle = -directionAngle
-
-        setDirectionRotation(directionAngle.toDouble())
-        setDialRotation(directionAngle)
-
-        degreeListener?.onDegreeChange(currentDegree)
-
     }
 
-
-    private fun setDirectionRotation(angle: Double) {
-        try {
-            val locationCoordinates = LocationCoordinates(this.currentLocation.latitude, this.currentLocation.longitude)
-            val qibla = QiblaAngle(locationCoordinates)
-            val stringBuilder = StringBuilder()
-
-            stringBuilder.append("+")
-            stringBuilder.append(qibla.angleDirection.roundToInt())
-            val str = stringBuilder.toString()
-            currentDegree = angle.toFloat() + str.toFloat()
-            rotationDegree = currentDegree
-            this.imageNeedle.rotation = currentDegree
-        } catch (exception: java.lang.Exception) {
-            exception.printStackTrace()
-        }
+    override fun setDirectionRotation(angle: Float) {
+        this.imageNeedle.rotation = angle
     }
 
-    private fun setDialRotation(angle: Float) {
+    override fun setDialRotation(angle: Float) {
         try {
             imageDial.rotation = angle
         } catch ( exception: Exception) {
-         degreeListener?.onDegreeChange(currentDegree)
+            degreeListener?.onDegreeChange(currentDegree)
         }
     }
-
-    override fun onAccuracyChanged(sensor: Sensor?, p1: Int) {}
 }
 

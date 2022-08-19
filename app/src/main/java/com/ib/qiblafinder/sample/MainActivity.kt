@@ -7,7 +7,7 @@ import com.ib.qiblafinder.QiblaDegreeListener
 import com.ib.qiblafinder.view.QiblaCompassView
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var qiblaCompassView: QiblaCompassView
+    private lateinit var qiblaCompassView: QiblaCompassViewV2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

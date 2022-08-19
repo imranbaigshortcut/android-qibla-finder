@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.ib.qiblafinder.view.QiblaCompassView
+    <com.ib.qiblafinder.view.QiblaCompassViewV2
         android:id="@+id/qiblaCompassView"
         app:dialDrawable="@drawable/ic_dial"
         app:needleDrawable="@drawable/ic_needle"
